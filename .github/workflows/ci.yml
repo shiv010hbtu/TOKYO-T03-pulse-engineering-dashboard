@@ -1,0 +1,40 @@
+name: Pulse CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install ML dependencies
+        run: |
+          cd ml
+          pip install -r requirements.txt
+      - name: Run ML tests
+        run: |
+          cd ml
+          python scorer.py
+          python bus_factor.py
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install and build
+        run: |
+          cd frontend/pulse-ui
+          npm install
+          npm run build
